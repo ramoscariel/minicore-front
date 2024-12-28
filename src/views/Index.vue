@@ -58,8 +58,8 @@
                 <td>{{ formatDate(gasto.fecha) }}</td>
                 <td>{{ gasto.descripcion }}</td>
                 <td>{{ gasto.monto }}</td>
-                <td><button>Actualizar</button></td>
-                <td><button>Borrar</button></td>
+                <td><RouterLink :to="`/actualizarGasto/${gasto.id_gasto}`">Actualizar</RouterLink></td>
+                <td><button @click="onBorrar(3,gasto.id_gasto)">Borrar</button></td>
             </tr>
         </tbody>
     </table>
@@ -92,15 +92,15 @@
 import { ref, onMounted } from 'vue';
 import { getAllEmpleados, deleteEmpleado } from '../models/empleado';
 import { getAllDepartamentos, deleteDepartamento } from '../models/departamento';
-import { getAllGastos, getTotalGastos } from '../models/gasto';
+import { getAllGastos, getTotalGastos, deleteGasto } from '../models/gasto';
 
 
 const empleados = ref([]);
 const departamentos = ref([]);
 const gastos = ref([]);
 const totalGastos = ref([]);
-const fechaInicio = ref('2024-11-16');
-const fechaFin = ref('2024-11-30')
+const fechaInicio = ref('2024-01-01');
+const fechaFin = ref('2024-12-31');
 
 
 const onDateSet = async () => {
@@ -123,6 +123,15 @@ const onBorrar = async (tipo, id) => {
             departamentos.value = await getAllDepartamentos();
         }catch{
             alert('Error eliminando departamento');
+        }
+    }
+    else if(tipo===3){
+        try{
+            await deleteGasto(id)
+            gastos.value = await getAllGastos();
+            totalGastos.value = await getTotalGastos(fechaInicio.value, fechaFin.value);
+        }catch{
+            alert('Error eliminando gasto');
         }
     }
 }
